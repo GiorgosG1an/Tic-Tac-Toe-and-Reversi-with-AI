@@ -63,3 +63,52 @@ def random_player(game, state):
     random_move = np.random.randint(num_legal_moves)
     return game.actions(state)[random_move]
 
+def alpha_beta_player(game, state):
+    """
+    Given a state in a game, calculate the best move by searching
+    forward all the way to the terminal states using alpha-beta pruning.
+
+    Args:
+        game: The game object representing the game being played.
+        state: The current state of the game.
+    
+    Returns:
+        The best move for the given state.
+    """
+
+    player = game.to_move(state)
+
+    def max_value(state, alpha, beta):
+        if game.terminal_test(state):
+            return game.utility(state, player)
+        v = -np.inf
+        for a in game.actions(state):
+            v = max(v, min_value(game.result(state, a), alpha, beta))
+            if v >= beta:
+                return v
+            alpha = max(alpha, v)
+        return v
+
+    def min_value(state, alpha, beta):
+        if game.terminal_test(state):
+            return game.utility(state, player)
+        v = np.inf
+        for a in game.actions(state):
+            v = min(v, max_value(game.result(state, a), alpha, beta))
+            if v <= alpha:
+                return v
+            beta = min(beta, v)
+        return v
+
+    alpha = -np.inf
+    beta = np.inf
+    best_score = -np.inf
+    best_action = None
+    for a in game.actions(state):
+        v = min_value(game.result(state, a), alpha, beta)
+        alpha = max(alpha, v)
+        if v > best_score:
+            best_score = v
+            best_action = a
+    return best_action
+ 
