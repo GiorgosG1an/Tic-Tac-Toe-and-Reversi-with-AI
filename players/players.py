@@ -44,3 +44,22 @@ def minmax_player(game, state):
         return v
 
     return max(game.actions(state), key=lambda a: min_value(game.result(state, a)))
+
+def random_player(game, state):
+    """
+    Randomly selects a move from the list of legal moves in the given game state.
+
+    Args:
+        game: The game object representing the game being played.
+        state: The current state of the game.
+
+    Returns:
+        The randomly selected move.
+    """
+    legal_moves = game.actions(state)
+    # count the number of legal moves
+    num_legal_moves = len(legal_moves)
+    # choose a random move
+    random_move = np.random.randint(num_legal_moves)
+    return game.actions(state)[random_move]
+
