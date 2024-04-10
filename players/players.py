@@ -118,4 +118,15 @@ def alpha_beta_player(game, state):
     return best_action  
 
 def mcts_player(game, state):
+    """
+    A player that uses Monte Carlo Tree Search (MCTS) algorithm to make decisions.
+
+    Parameters:
+    - game: The game object representing the game being played.
+    - state: The current state of the game.
+
+    Returns:
+    - The best move determined by the MCTS algorithm.
+
+    """
     return monte_carlo_tree_search(state, game)
