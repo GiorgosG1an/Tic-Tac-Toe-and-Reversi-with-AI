@@ -2,7 +2,8 @@ from gamestate.gamestate import GameState
 from game.game import Game
 from game.tic_tac_toe import TicTacToe
 from game.reversi import Reversi
-from players.players import manual_player, minmax_player, random_player, alpha_beta_player, reversi_random_player
+from players.players import manual_player, minmax_player, random_player, alpha_beta_player, mcts_player
+# from monte_carlo.monte_carlo_tree_search import MCTS
 
 def main():
     x_wins = 0
@@ -13,21 +14,14 @@ def main():
     
     while(True):
         game_choice = input("Enter the number of the game you would like to play: ")
+
         if game_choice == '1':
             game = TicTacToe()
-            utility = game.play_game(alpha_beta_player, random_player)
-            if utility == 1:
-                print("'X' won!")
-            elif utility == -1:
-                print("'O' won!")
-            else:
-                print('Tie!')
-            break
-    
-        elif game_choice == '2':
-            game = Reversi()
+            
             for i in range(100):
-                utility = game.play_game(random_player, random_player)
+
+                utility = game.play_game(mcts_player, random_player)
+
                 if utility == 1:
                     print("'X' won!")
                     x_wins += 1
@@ -37,7 +31,29 @@ def main():
                 else:
                     print('Tie!')
                     ties += 1
+
             break
+    
+        elif game_choice == '2':
+
+            game = Reversi()
+
+            for i in range(100):
+
+                utility = game.play_game(random_player, random_player)
+
+                if utility == 1:
+                    print("'X' won!")
+                    x_wins += 1
+                elif utility == -1:
+                    print("'O' won!")
+                    o_wins += 1
+                else:
+                    print('Tie!')
+                    ties += 1
+
+            break
+
         else:
             print("Invalid choice.\n")
         
