@@ -1,8 +1,10 @@
 import numpy as np
+import random
 
 from gamestate.gamestate import GameState
 from game.game import Game
 from game.tic_tac_toe import TicTacToe
+from monte_carlo.monte_carlo_tree_search import monte_carlo_tree_search
 
 def manual_player(game, state):
     """A manual player."""
@@ -112,5 +114,8 @@ def alpha_beta_player(game, state):
         if v > best_score:
             best_score = v
             best_action = a
-    return best_action
- 
+    
+    return best_action  
+
+def mcts_player(game, state):
+    return monte_carlo_tree_search(state, game)
