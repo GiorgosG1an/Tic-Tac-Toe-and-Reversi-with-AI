@@ -60,7 +60,9 @@ def random_player(game, state):
     # count the number of legal moves
     num_legal_moves = len(legal_moves)
     # choose a random move
-    random_move = np.random.randint(num_legal_moves)
+    random_move = np.random.choice(num_legal_moves, 
+                                   p=[1/num_legal_moves for _ in range(num_legal_moves)])
+    # print(f"Debug: random_move = {game.actions(state)[random_move]}\nprobability: {[1/num_legal_moves for _ in range(num_legal_moves)]}")
     return game.actions(state)[random_move]
 
 def alpha_beta_player(game, state):
