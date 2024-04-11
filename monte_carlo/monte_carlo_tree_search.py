@@ -1,5 +1,26 @@
+"""
+## monte_carlo_tree_search.py
+
+This module contains the implementation of the Monte Carlo Tree Search (MCTS) algorithm. MCTS is a 
+heuristic search algorithm used in decision processes, most notably in Artificial Intelligence (AI) 
+applications such as games.
+
+Classes:
+- MCTNode: Represents a node in the Monte Carlo Tree Search algorithm.
+
+Functions:
+- ucb(n, C=1.4): Calculates the Upper Confidence Bound (UCB) for a node.
+- select(node): Selects the child node with the highest UCB value recursively until a leaf node is reached.
+- expand(node, game): Expands the given node by creating child nodes for all possible actions in the game.
+- simulate(game, state): Simulates a game from the given state until a terminal state is reached.
+- backpropagate(node, utility): Backpropagates the utility value from a leaf node up to the root node.
+- monte_carlo_tree_search(state, game, iterations=1000): Performs the MCTS algorithm to find the best move in a game.
+
+Authors: 
+- Giannopoulos Georgios
+- Giannopoulos Ioannis
+"""
 import random
-# from collections import defaultdict
 import numpy as np
 
 class MCTNode:
