@@ -1,3 +1,22 @@
+"""
+## main.py
+
+This module is the entry point of the application. It allows the user to choose between two games: Tic Tac Toe and Reversi. 
+The games are played 100 times, with different player strategies. The results (number of wins for each player and ties) are 
+then printed out.
+
+The module imports the necessary classes and functions from the gamestate, game, and players modules.
+
+Functions:
+- main(): The main function of the module. It handles the game choice, plays the games, and prints out the results.
+
+This module is part of a first semester project in Artificial Intelligence at University of Peloponnese, 
+Department of Informatics and Telecommunications.
+
+Authors: 
+- Giannopoulos Georgios
+- Giannopoulos Ioannis
+"""
 from gamestate.gamestate import GameState
 from game.game import Game
 from game.tic_tac_toe import TicTacToe
