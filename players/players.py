@@ -1,3 +1,21 @@
+"""
+## players.py
+
+It contains several types of players for a game, each with a different strategy:
+
+Functions:
+- manual_player(game, state): A player that manually inputs their move.
+- minmax_player(game, state): A player that uses the Minimax algorithm to decide their move.
+- random_player(game, state): A player that randomly selects their move.
+- alpha_beta_player(game, state): A player that uses the Alpha-Beta pruning algorithm to decide their move.
+- mcts_player(game, state): A player that uses the Monte Carlo Tree Search algorithm to decide their move.
+
+Each player function takes a game object and a state object as parameters and returns a move.
+
+Authors: 
+- Giannopoulos Georgios
+- Giannopoulos Ioannis
+"""
 import numpy as np
 import random
 
