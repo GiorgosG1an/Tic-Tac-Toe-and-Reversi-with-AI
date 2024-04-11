@@ -22,7 +22,7 @@ from game.game import Game
 from game.tic_tac_toe import TicTacToe
 from game.reversi import Reversi
 from players.players import manual_player, minmax_player, random_player, alpha_beta_player, mcts_player
-# from monte_carlo.monte_carlo_tree_search import MCTS
+
 
 def main():
     x_wins = 0
