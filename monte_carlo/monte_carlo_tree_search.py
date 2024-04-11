@@ -82,8 +82,15 @@ def select(node):
     Returns:
         - Node: The selected leaf node.
     """
+    # Check if the node has children
     if node.children:
-        return select(max(node.children.keys(), key=lambda child: ucb(child)))
+
+        child_nodes = node.children.keys()
+        ucb_value = lambda child: ucb(child)
+        # Select the child node with the highest UCB value
+        best_child = max(child_nodes, key=ucb_value)
+
+        return select(best_child)
     else:
         return node
 
@@ -98,9 +105,21 @@ def expand(node, game):
     Returns:
         - The selected child node.
     """
+    # Check if the node has no children and the game is not in a terminal state
     if not node.children and not game.terminal_test(node.state):
-        node.children = {MCTNode(state=game.result(node.state, action), parent=node): action
-                         for action in game.actions(node.state)}
+        # Initialize an empty dictionary for the children
+        node.children = {}
+        
+        # Get all possible actions from the current state
+        actions = game.actions(node.state)
+        # For each action, create a new MCTNode with the resulting state and the current node as the parent
+        # Then, add the new node to the children dictionary with the action as the key
+        for action in actions:
+            new_state = game.result(node.state, action)
+            new_node = MCTNode(state=new_state, parent=node)
+            node.children[new_node] = action
+
+
     return select(node)
 
 def simulate(game, state):
@@ -117,8 +136,12 @@ def simulate(game, state):
     """
 
     player = game.to_move(state)
+
+    # loop until the game reaches a terminal state
     while not game.terminal_test(state):
+        # Choose a random action 
         action = random.choice(list(game.actions(state)))
+        # Get the new state after taking the action
         state = game.result(state, action)
     return -game.utility(state, player)
 
@@ -130,10 +153,15 @@ def backpropagate(node, utility):
         - node (Node): The current node being backpropagated.
         - utility (float): The utility value to be backpropagated.
     """
+
     if utility > 0:
-        node.U += utility
+        # add the utility to the total utility of the node
+        node.U += utility\
+    # increment the number of visits to the node
     node.N += 1
+    # check if the node has a parent
     if node.parent:
+        # backpropagate the utility to the parent node
         backpropagate(node.parent, -utility)
 
 def monte_carlo_tree_search(state, game, iterations=1000):
@@ -152,11 +180,16 @@ def monte_carlo_tree_search(state, game, iterations=1000):
     root = MCTNode(state=state)
 
     for _ in range(iterations):
+        # select a leaf node
         leaf = select(root)
+        # expand the leaf node
         child = expand(leaf, game)
+        # simulate the game from the child node
         result = simulate(game, child.state)
+        # Backpropagate the result of the simulation up the tree to update the total utility and visit count of each node
         backpropagate(child, result)
 
+    # return the child node with the highest number of visits
     max_state = max(root.children, key=lambda p: p.N)
     return root.children.get(max_state)
 
