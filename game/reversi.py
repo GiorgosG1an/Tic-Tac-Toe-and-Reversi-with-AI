@@ -1,3 +1,22 @@
+"""
+## reversi.py
+
+This module contains the Reversi game implementation. Reversi is a strategy board game for two players, 
+played on an 8×8 uncheckered board. Players take turns placing disks on the board with their assigned color 
+facing up. During a play, any disks of the opponent's color that are in a straight line and bounded by the 
+disk just placed and another disk of the current player's color are turned over to the current player's color.
+
+The object of the game is to have the majority of disks turned to display your color when the last playable 
+empty square is filled.
+
+Classes:
+- Reversi: This class represents a Reversi game. It inherits from the Game class and overrides its methods 
+  to implement the Reversi game rules.
+
+Author: 
+- Giannopoulos Georgios
+- Giannopoulos Ioannis
+"""
 from game.game import Game
 from gamestate.gamestate import GameState
 class Reversi(Game):
