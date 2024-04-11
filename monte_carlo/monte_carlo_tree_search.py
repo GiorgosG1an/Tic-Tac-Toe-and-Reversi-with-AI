@@ -1,13 +1,13 @@
 import random
-from collections import defaultdict
+# from collections import defaultdict
 import numpy as np
 
-class MCT_Node:
+class MCTNode:
     """
     Represents a node in the Monte Carlo Tree Search algorithm.
 
     Attributes:
-        - parent (MCT_Node): The parent node of this node.
+        - parent (MCTNode): The parent node of this node.
         - state: The state associated with this node.
         - U (int): The U value of this node.
         - N (int): The N value of this node.
@@ -16,7 +16,10 @@ class MCT_Node:
     """
 
     def __init__(self, parent=None, state=None, U=0, N=0):
-        self.__dict__.update(parent=parent, state=state, U=U, N=N)
+        self.parent = parent
+        self.state = state
+        self.U = U
+        self.N = N
         self.children = {}
         self.actions = None
 
@@ -48,95 +51,94 @@ def ucb(n, C=1.4):
 
     return ucb_calc
 
-def monte_carlo_tree_search(state, game, N=1000):
+def select(node):
     """
-    Perform Monte Carlo Tree Search to find the best move in a game.
+    Selects the child node with the highest UCB value recursively until a leaf node is reached.
+
+    Args:
+        - node (Node): The current node in the tree.
+
+    Returns:
+        - Node: The selected leaf node.
+    """
+    if node.children:
+        return select(max(node.children.keys(), key=lambda child: ucb(child)))
+    else:
+        return node
+
+def expand(node, game):
+    """
+    Expands the given node by creating child nodes for all possible actions in the game.
+
+    Args:
+        - node (MCTNode): The node to expand.
+        - game: The game object representing the current state of the game.
+
+    Returns:
+        - The selected child node.
+    """
+    if not node.children and not game.terminal_test(node.state):
+        node.children = {MCTNode(state=game.result(node.state, action), parent=node): action
+                         for action in game.actions(node.state)}
+    return select(node)
+
+def simulate(game, state):
+    """
+    Simulates a game from the given state until a terminal state is reached.
+    Returns the utility value of the terminal state for the player.
+
+    Parameters:
+    - game: The game object representing the rules of the game.
+    - state: The current state of the game.
+
+    Returns:
+    - The utility value of the terminal state for the player.
+    """
+
+    player = game.to_move(state)
+    while not game.terminal_test(state):
+        action = random.choice(list(game.actions(state)))
+        state = game.result(state, action)
+    return -game.utility(state, player)
+
+def backpropagate(node, utility):
+    """
+    Backpropagates the utility value from a leaf node up to the root node.
+
+    Args:
+        - node (Node): The current node being backpropagated.
+        - utility (float): The utility value to be backpropagated.
+    """
+    if utility > 0:
+        node.U += utility
+    node.N += 1
+    if node.parent:
+        backpropagate(node.parent, -utility)
+
+def monte_carlo_tree_search(state, game, iterations=1000):
+    """
+    Performs Monte Carlo Tree Search algorithm to find the best move in a game.
 
     Args:
         - state: The current state of the game.
-        - game: The game object that defines the game rules and actions.
-        - N: The number of iterations to perform in the search (default: 1000).
+        - game: The game object that provides the necessary methods for game simulation.
+        - iterations: The number of iterations to perform during the search (default=1000).
 
     Returns:
-        - The best move to play based on the Monte Carlo Tree Search.
-
+        The best move found by the Monte Carlo Tree Search algorithm.
     """
-    def select(n):
-        """
-        Selects the child node with the highest UCB value recursively until a leaf node is reached.
 
-        Parameters:
-        - n: The current node to select from.
+    root = MCTNode(state=state)
 
-        Returns:
-        - The selected node.
-
-        """
-        if n.children:
-            return select(max(n.children.keys(), key=ucb))
-        else:
-            return n
-
-    def expand(n):
-        """
-        Expands the given node by creating child nodes for all possible actions.
-
-        Args:
-            - n (MCT_Node): The node to expand.
-
-        Returns:
-            - MCT_Node: The selected child node.
-        """
-        if not n.children and not game.terminal_test(n.state):
-            n.children = {MCT_Node(state=game.result(n.state, action), parent=n): action
-                          for action in game.actions(n.state)}
-        return select(n)
-
-    def simulate(game, state):
-        """
-        Simulates a game from the given state until a terminal state is reached.
-        Returns the utility value of the terminal state for the player.
-
-        Parameters:
-        - game: The game object representing the game being played.
-        - state: The current state of the game.
-
-        Returns:
-        - The utility value of the terminal state for the player.
-        """
-        player = game.to_move(state)
-        while not game.terminal_test(state):
-            action = random.choice(list(game.actions(state)))
-            state = game.result(state, action)
-        v = game.utility(state, player)
-        return -v
-
-    def backpropagate(n, utility):
-        """
-        Backpropagates the utility value from a leaf node up to the root node.
-
-        Args:
-            - n (Node): The current node being backpropagated.
-            - utility (float): The utility value to be backpropagated.
-        """
-        if utility > 0:
-            n.U += utility
-        n.N += 1
-
-        if n.parent:
-            backpropagate(n.parent, -utility)
-
-
-    root = MCT_Node(state=state)
-
-    for _ in range(N):
+    for _ in range(iterations):
         leaf = select(root)
-        child = expand(leaf)
+        child = expand(leaf, game)
         result = simulate(game, child.state)
         backpropagate(child, result)
 
     max_state = max(root.children, key=lambda p: p.N)
-
     return root.children.get(max_state)
+
+
 
 
