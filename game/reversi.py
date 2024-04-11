@@ -13,7 +13,7 @@ Classes:
 - Reversi: This class represents a Reversi game. It inherits from the Game class and overrides its methods 
   to implement the Reversi game rules.
 
-Author: 
+Authors: 
 - Giannopoulos Georgios
 - Giannopoulos Ioannis
 """
