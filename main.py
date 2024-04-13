@@ -21,7 +21,7 @@ from gamestate.gamestate import GameState
 from game.game import Game
 from game.tic_tac_toe import TicTacToe
 from game.reversi import Reversi
-from players.players import manual_player, minmax_player, random_player, alpha_beta_player, mcts_player
+from players.players import manual_player, minmax_player, random_player, alpha_beta_player, mcts_player, alpha_beta_cutoff_player
 
 
 def main():
@@ -57,9 +57,9 @@ def main():
 
             game = Reversi()
 
-            for i in range(100):
+            for i in range(10):
 
-                utility = game.play_game(random_player, random_player)
+                utility = game.play_game(alpha_beta_cutoff_player, random_player)
 
                 if utility == 1:
                     print("'X' won!")
