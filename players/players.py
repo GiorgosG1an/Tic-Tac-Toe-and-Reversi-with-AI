@@ -22,6 +22,7 @@ import random
 from gamestate.gamestate import GameState
 from game.game import Game
 from game.tic_tac_toe import TicTacToe
+from game.reversi import Reversi
 from monte_carlo.monte_carlo_tree_search import monte_carlo_tree_search
 
 def manual_player(game, state):
@@ -148,3 +149,18 @@ def mcts_player(game, state):
 
     """
     return monte_carlo_tree_search(state, game)
+
+def alpha_beta_cutoff_player(game, state, depth=3):
+    """
+    This function represents an alpha-beta cutoff player that uses the alpha-beta cutoff search algorithm and 
+    an evaluation function to make decisions in a game.
+
+    Parameters:
+    - game: The game object representing the game being played.
+    - state: The current state of the game.
+    - depth: The maximum depth to search in the game tree (default=3).
+
+    Returns:
+    - The best move determined by the alpha-beta cutoff search algorithm and the .
+    """
+    return game.alpha_beta_cutoff_search(state, depth)
