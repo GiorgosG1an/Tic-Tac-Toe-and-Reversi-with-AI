@@ -17,6 +17,7 @@ Authors:
 - Giannopoulos Georgios
 - Giannopoulos Ioannis
 """
+import numpy as np
 from game.game import Game
 from gamestate.gamestate import GameState
 class Reversi(Game):
@@ -178,3 +179,234 @@ class Reversi(Game):
             if board[k] == 'O':
                 oscore += 1
         return {'X':xscore, 'O':oscore}
+    
+    # ----------------- Start of heuristic functions -----------------
+
+    def countTiles(self, board):
+        """
+        Counts the number of 'X' and 'O' tiles on the board and returns a percentage
+        representing the dominance of one player over the other.
+
+        Args:
+            board (dict): A dictionary representing the game board, where the keys are
+                          the positions and the values are the tiles ('X', 'O', or empty).
+
+        Returns:
+            float: The dominance percentage of the player with more tiles. If the number
+                   of 'X' and 'O' tiles is equal, returns 0.
+
+        """
+        tiles_x = sum(1 for tile in board.values() if tile == 'X')
+        tiles_o = sum(1 for tile in board.values() if tile == 'O')
+
+        total_tiles = tiles_x + tiles_o
+
+        if tiles_x > tiles_o:
+            return 100 * tiles_x / total_tiles
+        elif tiles_x < tiles_o:
+            return 100 * tiles_o / total_tiles
+        else:
+            return 0
+    
+    def countCorners(self, board):
+        """
+        Counts the number of corners occupied by 'X' and 'O' on the board.
+
+        Args:
+            board (dict): The game board represented as a dictionary.
+
+        Returns:
+                The difference between the number of corners occupied by 'X' and 'O',
+                multiplied by 25.
+
+                ```python
+                25 * (corners_x - corners_o)
+                ```
+        """
+        corners_x = sum(1 for corner in [(0, 0), (0, 7), (7, 0), (7, 7)] if board.get(corner) == 'X')
+        corners_o = sum(1 for corner in [(0, 0), (0, 7), (7, 0), (7, 7)] if board.get(corner) == 'O')
+
+        return 25 * (corners_x - corners_o)
+    
+    def proximityCorners(self, board):
+        """
+        Calculates the proximity score based on the number of X and O tiles near the corners.
+
+        Args:
+            board (dict): A dictionary representing the game board.
+
+        Returns:
+            The proximity score calculated based on the difference between the number of X and O tiles near the corners.
+
+            ```python
+            -12.5 * (proximity_angle_x - proximity_angle_o)
+            ```
+        """
+        proximity_angle_x = 0
+        proximity_angle_o = 0
+
+        # Define the squares enclosing each corner
+        corners_enclosing_squares = {
+            (0, 0): [(0, 1), (1, 0), (1, 1)],
+            (0, 7): [(0, 6), (1, 7), (1, 6)],
+            (7, 0): [(6, 0), (7, 1), (6, 1)],
+            (7, 7): [(6, 7), (7, 6), (6, 6)]
+        }
+
+        for corner, enclosing_squares in corners_enclosing_squares.items():
+            corner_tile = board.get(corner)
+            if not corner_tile:  # If the corner is empty
+                for square in enclosing_squares:
+                    tile = board.get(square)
+                    if tile == 'X':
+                        proximity_angle_x += 1
+                    elif tile == 'O':
+                        proximity_angle_o += 1
+
+        return -12.5 * (proximity_angle_x - proximity_angle_o)
+    
+    def calcMobility(self, state):
+        """
+        Calculates the mobility score for a given game state.
+
+        Parameters:
+        - state: The game state for which to calculate the mobility score.
+
+        Returns:
+        - The mobility score as a percentage.
+
+        The mobility score is calculated by counting the number of valid moves for each player ('X' and 'O'), with the `getValidMoves()` method.
+        The total number of moves is then used to calculate the percentage of moves available to the player with more moves.
+        If both players have the same number of moves, the mobility score is 0.
+
+        """
+        moves_x = len(self.getValidMoves(state.board, 'X'))
+        moves_o = len(self.getValidMoves(state.board, 'O'))
+
+        total_moves = moves_x + moves_o
+
+        if moves_x > moves_o:
+            return 100 * moves_x / total_moves
+        elif moves_x < moves_o:
+            return 100 * moves_o / total_moves
+        else:
+            return 0
+        
+    
+
+    def calcDiscs(self, board):
+        """
+        Calculates the total weight of discs on the board based on a predefined weight matrix.
+
+        Args:
+            board (dict): A dictionary representing the game board, where the keys are (row, col) tuples and the values are the disc types ('X' or 'O').
+
+        Returns:
+            int: The difference between the total weight of 'X' discs and 'O' discs on the board.
+        """
+        WEIGHT_MATRIX = [
+            [20, -3, 11,  8,  8, 11, -3, 20],
+            [-3, -7, -4,  1,  1, -4, -7, -3],
+            [11, -4,  2,  2,  2,  2, -4, 11],
+            [ 8,  1,  2, -3, -3,  2,  1,  8],
+            [ 8,  1,  2, -3, -3,  2,  1,  8],
+            [11, -4,  2,  2,  2,  2, -4, 11],
+            [-3, -7, -4,  1,  1, -4, -7, -3],
+            [20, -3, 11,  8,  8, 11, -3, 20]
+        ]
+        total_weight_x = 0
+        total_weight_o = 0
+
+        for row in range(8):
+            for col in range(8):
+                tile = board.get((row, col))
+                if tile == 'X':
+                    total_weight_x += WEIGHT_MATRIX[row][col]
+                elif tile == 'O':
+                    total_weight_o += WEIGHT_MATRIX[row][col]
+
+        return total_weight_x - total_weight_o
+    
+    def heuristic_score(self, state):
+        """
+        Calculates the heuristic score for a given game state.
+
+        The heuristic score is calculated by combining different terms with weights.
+        The terms include the number of tiles, the number of corners, the proximity to corners,
+        the mobility, and the number of discs on the board.
+
+        Args:
+            state (GameState): The game state for which to calculate the heuristic score.
+
+        Returns:
+            float: The heuristic score for the given game state, positive for the `X player` and negative for 
+             the `O player`.
+        """
+
+        tiles_term = self.countTiles(state.board)
+        corners_term = self.countCorners(state.board)
+        proximity_corners_term = self.proximityCorners(state.board)
+        mobility_term = self.calcMobility(state)
+        discs_term = self.calcDiscs(state.board)
+
+        # Linear combination of terms with weights
+        score = (10 * tiles_term +
+                 801.724 * corners_term +
+                 382.026 * proximity_corners_term +
+                 78.922 * mobility_term +
+                 10 * discs_term)
+
+        # Adjust the score based on the player's turn
+        if state.to_move == 'X':
+            return score
+        else:
+            return -score
+        
+    def alpha_beta_cutoff_search(self, state, depth=3):
+        """
+        Performs an alpha-beta cutoff search to find the best action for the given state.
+
+        Args:
+            state: The current state of the game.
+            depth (optional): The maximum depth to search in the game tree. Defaults to 3.
+
+        Returns:
+            The best action to take based on the alpha-beta cutoff search.
+
+        """
+        player = self.to_move(state)
+
+        def max_value(state, alpha, beta, depth):
+            if self.terminal_test(state) or depth == 0:
+                return self.heuristic_score(state)
+            v = -np.inf
+            for a in self.actions(state):
+                v = max(v, min_value(self.result(state, a), alpha, beta, depth - 1))
+                if v >= beta:
+                    return v
+                alpha = max(alpha, v)
+            return v
+
+        def min_value(state, alpha, beta, depth):
+            if self.terminal_test(state) or depth == 0:
+                return self.heuristic_score(state)
+            v = np.inf
+            for a in self.actions(state):
+                v = min(v, max_value(self.result(state, a), alpha, beta, depth - 1))
+                if v <= alpha:
+                    return v
+                beta = min(beta, v)
+            return v
+
+        alpha = -np.inf
+        beta = np.inf
+        best_score = -np.inf
+        best_action = None
+        for a in self.actions(state):
+            v = min_value(self.result(state, a), alpha, beta, depth)
+            alpha = max(alpha, v)
+            if v > best_score:
+                best_score = v
+                best_action = a
+
+        return best_action
