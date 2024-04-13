@@ -22,7 +22,7 @@ from game.game import Game
 from game.tic_tac_toe import TicTacToe
 from game.reversi import Reversi
 from players.players import manual_player, minmax_player, random_player, alpha_beta_player, mcts_player, alpha_beta_cutoff_player
-
+import time
 
 def main():
     x_wins = 0
@@ -36,9 +36,65 @@ def main():
 
         if game_choice == '1':
             game = TicTacToe()
-            
-            for i in range(100):
 
+            start_time = time.time()
+            # minmax player VS random player
+            for i in range(10):
+                
+
+                utility = game.play_game(minmax_player, random_player)
+
+                if utility == 1:
+                    print("'X' won!")
+                    x_wins += 1
+                elif utility == -1:
+                    print("'O' won!")
+                    o_wins += 1
+                else:
+                    print('Tie!')
+                    ties += 1
+            end_time = time.time()
+            total_time = (end_time - start_time)
+            
+            print("X wins: ", x_wins/10 * 100, "%")
+            print("O wins: ", o_wins / 10 * 100, "%")
+            print("Ties: ", ties / 10 * 100, "%")
+            print(f"Time elapsed:  {total_time:.2f} seconds\n")
+
+            x_wins = 0
+            o_wins = 0
+            ties = 0
+
+            # alpha beta player VS random player
+            for i in range(10):
+                start_time = time.time()
+                utility = game.play_game(alpha_beta_player, random_player)
+    
+                if utility == 1:
+                    print("'X' won!")
+                    x_wins += 1
+                elif utility == -1:
+                    print("'O' won!")
+                    o_wins += 1
+                else:
+                    print('Tie!')
+                    ties += 1
+            end_time = time.time()
+            total_time = (end_time - start_time)
+                
+            print("X wins: ", x_wins/10 * 100, "%")
+            print("O wins: ", o_wins / 10 * 100, "%")
+            print("Ties: ", ties / 10 * 100, "%")
+            print(f"Time elapsed:  {total_time:.2f} seconds\n")
+
+            x_wins = 0
+            o_wins = 0
+            ties = 0
+            
+            # Monte Carlo tree search  player VS random player
+            start_time = time.time()
+            for i in range(10):
+                
                 utility = game.play_game(mcts_player, random_player)
 
                 if utility == 1:
@@ -50,6 +106,14 @@ def main():
                 else:
                     print('Tie!')
                     ties += 1
+            end_time = time.time()
+            total_time = (end_time - start_time)
+               
+            print("X wins: ", x_wins/10 * 100, "%")
+            print("O wins: ", o_wins / 10 * 100, "%")
+            print("Ties: ", ties / 100 * 10, "%")
+            
+            print(f"Time elapsed:  {total_time:.2f} seconds\n")
 
             break
     
@@ -57,7 +121,7 @@ def main():
 
             game = Reversi()
 
-            for i in range(10):
+            for i in range(100):
 
                 utility = game.play_game(alpha_beta_cutoff_player, random_player)
 
@@ -76,9 +140,9 @@ def main():
         else:
             print("Invalid choice.\n")
         
-    print("X wins: ", x_wins)
-    print("O wins: ", o_wins)
-    print("Ties: ", ties)
+    print("X wins: ", x_wins/100 * 100, "%")
+    print("O wins: ", o_wins / 100 * 100, "%")
+    print("Ties: ", ties / 100 * 100, "%")
     
 if __name__ == "__main__":
     main()
