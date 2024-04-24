@@ -156,7 +156,7 @@ def backpropagate(node, utility):
 
     if utility > 0:
         # add the utility to the total utility of the node
-        node.U += utility\
+        node.U += utility
     # increment the number of visits to the node
     node.N += 1
     # check if the node has a parent
