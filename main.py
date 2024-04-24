@@ -28,121 +28,196 @@ def main():
     x_wins = 0
     o_wins = 0
     ties = 0
-
-    print("Which game would you like to play?\n (1) Tic Tac Toe\n (2) Reversi")
-    
     while(True):
+
+        print("\t\t\tΕργασία Μαθήματος Τεχνητής Νοημοσύνης")
+        print("Τα ερωτήματα εκτελούνται σειριακά εκτός του ερωτήματος 3.1 που")
+        print("είναι το παιχνίδι του manual player VS minimax για το Reversi.")
+        print("Πληκτρολογήστε\n1 για τα ερωτήματα της τρίλιζας\n2 για τα ερωτήματα του Reversi\n3 για το ερώτημα 3.1 και έπειτα cntr+c για την διακοπή του.\nΟτιδήποτε άλλο για έξοδο\n")
+        print("Which game would you like to play?\n (1) Tic Tac Toe\n (2) Reversi\n (3) Question 3.1")
         game_choice = input("Enter the number of the game you would like to play: ")
 
-        if game_choice == '1':
-            game = TicTacToe()
-
-            start_time = time.time()
-            # minmax player VS random player
-            for i in range(10):
-                
-
-                utility = game.play_game(minmax_player, random_player)
-
-                if utility == 1:
-                    print("'X' won!")
-                    x_wins += 1
-                elif utility == -1:
-                    print("'O' won!")
-                    o_wins += 1
-                else:
-                    print('Tie!')
-                    ties += 1
-            end_time = time.time()
-            total_time = (end_time - start_time)
-            
-            print("X wins: ", x_wins/10 * 100, "%")
-            print("O wins: ", o_wins / 10 * 100, "%")
-            print("Ties: ", ties / 10 * 100, "%")
-            print(f"Time elapsed:  {total_time:.2f} seconds\n")
-
+        if (game_choice== '1' or game_choice == '2' or game_choice == '3'):
             x_wins = 0
             o_wins = 0
             ties = 0
-
-            # alpha beta player VS random player
-            for i in range(10):
+            if game_choice == '1':
+                game = TicTacToe()
+                print("\t\t\tΕρώτημα 2.1\n")
+                x_wins = 0
+                o_wins = 0
+                ties = 0
                 start_time = time.time()
-                utility = game.play_game(alpha_beta_player, random_player)
-    
-                if utility == 1:
-                    print("'X' won!")
-                    x_wins += 1
-                elif utility == -1:
-                    print("'O' won!")
-                    o_wins += 1
-                else:
-                    print('Tie!')
-                    ties += 1
-            end_time = time.time()
-            total_time = (end_time - start_time)
+                # minmax player VS random player
+                for i in range(100):
+                    
+                    utility = game.play_game(minmax_player, random_player)
+
+                    if utility == 1:
+                        print("'X' won!")
+                        x_wins += 1
+                    elif utility == -1:
+                        print("'O' won!")
+                        o_wins += 1
+                    else:
+                        print('Tie!')
+                        ties += 1
+                end_time = time.time()
+                total_time = (end_time - start_time)
                 
-            print("X wins: ", x_wins/10 * 100, "%")
-            print("O wins: ", o_wins / 10 * 100, "%")
-            print("Ties: ", ties / 10 * 100, "%")
-            print(f"Time elapsed:  {total_time:.2f} seconds\n")
+                print("X wins: ", x_wins/100 * 100, "%")
+                print("O wins: ", o_wins / 100 * 100, "%")
+                print("Ties: ", ties / 100 * 100, "%")
+                print(f"Time elapsed:  {total_time:.2f} seconds\n")
 
-            x_wins = 0
-            o_wins = 0
-            ties = 0
-            
-            # Monte Carlo tree search  player VS random player
-            start_time = time.time()
-            for i in range(10):
+                next_quest = input("\nΠατήστε οτιδήποτε για να συνεχίσετε στην επόμενη ερώτηση >> ")
+
+
+                print("=============================================================================================")
+                print("\nΕρώτημα 2.2 α-β player VS Random player")
+                x_wins = 0
+                o_wins = 0
+                ties = 0
+
+                # alpha beta player VS random player
+                start_time = time.time()
+                for i in range(100):
+                    
+                    utility = game.play_game(alpha_beta_player, random_player)
+                    
+                    if utility == 1:
+                        print("'X' won!")
+                        x_wins += 1
+                    elif utility == -1:
+                        print("'O' won!")
+                        o_wins += 1
+                    else:
+                        print('Tie!')
+                        ties += 1
+                end_time = time.time()
+                total_time = (end_time - start_time)
+                    
+                print("X wins: ", x_wins/100 * 100, "%")
+                print("O wins: ", o_wins / 100 * 100, "%")
+                print("Ties: ", ties / 100 * 100, "%")
+                print(f"Time elapsed:  {total_time:.2f} seconds\n")
+
+
+                next_quest = input("\nΠατήστε οτιδήποτε για να συνεχίσετε στην επόμενη ερώτηση >> ")
+
+                print("=============================================================================================")
+                print("\nΕρώτημα 2.3 Monte Carlo player VS Random player")
+                x_wins = 0
+                o_wins = 0
+                ties = 0
                 
-                utility = game.play_game(mcts_player, random_player)
+                # Monte Carlo tree search  player VS random player
+                start_time = time.time()
+                for i in range(100):
+                    
+                    utility = game.play_game(mcts_player, random_player)
 
+                    if utility == 1:
+                        print("'X' won!")
+                        x_wins += 1
+                    elif utility == -1:
+                        print("'O' won!")
+                        o_wins += 1
+                    else:
+                        print('Tie!')
+                        ties += 1
+                end_time = time.time()
+                total_time = (end_time - start_time)
+                
+                print("X wins: ", x_wins/100 * 100, "%")
+                print("O wins: ", o_wins / 100 * 100, "%")
+                print("Ties: ", ties / 100 * 100, "%")
+                
+                print(f"Time elapsed:  {total_time:.2f} seconds\n")
+
+                # break
+        
+            elif game_choice == '2':
+
+                game = Reversi()
+                print("Ερώτημα 3.2 Τυχαίος παίκτης εναντίον Τυχαίου παίκτη\n")
+                start_time = time.time()
+                for i in range(100):
+
+                    utility = game.play_game(random_player, random_player)
+
+                    if utility == 1:
+                        print("'X' won!")
+                        x_wins += 1
+                    elif utility == -1:
+                        print("'O' won!")
+                        o_wins += 1
+                    else:
+                        print('Tie!')
+                        ties += 1
+
+                end_time = time.time()
+                total_time = (end_time - start_time)
+                print("X wins: ", x_wins / 100 * 100, "%")
+                print("O wins: ", o_wins / 100 * 100, "%")
+                print("Ties: ", ties / 100 * 100, "%")
+                print(f"Time elapsed:  {total_time:.2f} seconds\n")
+                next_quest = input("\nΠατήστε οτιδήποτε για να συνεχίσετε στην επόμενη ερώτηση >> ")
+
+                print("=============================================================================================")
+                print("\nΕρώτημα 3.4 Πριόνισμα α-β με περιορισμό βάθους VS Random player\nΠαίρνει αρκετά λεπτά για να ολοκληρωθεί, περίπου 20 λεπτά\n")
+                x_wins = 0
+                o_wins = 0
+                ties = 0
+                start_time = time.time()
+                for i in range(100):
+
+                    utility = game.play_game(alpha_beta_cutoff_player, random_player)
+
+                    if utility == 1:
+                        print("'X' won!")
+                        x_wins += 1
+                    elif utility == -1:
+                        print("'O' won!")
+                        o_wins += 1
+                    else:
+                        print('Tie!')
+                        ties += 1
+
+                end_time = time.time()
+                total_time = (end_time - start_time) / 60
+                print("X wins: ", x_wins/100 * 100, "%")
+                print("O wins: ", o_wins / 100 * 100, "%")
+                print("Ties: ", ties / 100 * 100, "%")
+                print(f"Time elapsed:  {total_time:.2f} minutes\n")
+                
+
+                # break
+            elif(game_choice=='3'):
+                print("Ερώτημα 3.1 Παιχνίδι Reversi μεταξύ χειροκίνητου και minimax παίκτη\n")
+                game = Reversi()
+                x_wins = 0
+                o_wins = 0
+                ties = 0
+                utility = game.play_game(manual_player, minmax_player)
                 if utility == 1:
-                    print("'X' won!")
-                    x_wins += 1
+                        print("'X' won!")
+                        x_wins += 1
                 elif utility == -1:
                     print("'O' won!")
                     o_wins += 1
                 else:
                     print('Tie!')
                     ties += 1
-            end_time = time.time()
-            total_time = (end_time - start_time)
-               
-            print("X wins: ", x_wins/10 * 100, "%")
-            print("O wins: ", o_wins / 10 * 100, "%")
-            print("Ties: ", ties / 100 * 10, "%")
-            
-            print(f"Time elapsed:  {total_time:.2f} seconds\n")
-
-            break
-    
-        elif game_choice == '2':
-
-            game = Reversi()
-
-            for i in range(100):
-
-                utility = game.play_game(alpha_beta_cutoff_player, random_player)
-
-                if utility == 1:
-                    print("'X' won!")
-                    x_wins += 1
-                elif utility == -1:
-                    print("'O' won!")
-                    o_wins += 1
-                else:
-                    print('Tie!')
-                    ties += 1
-
-            break
 
         else:
-            print("Invalid choice.\n")
+            print("Έξοδος...\n")
+            break
         
-    print("X wins: ", x_wins/100 * 100, "%")
-    print("O wins: ", o_wins / 100 * 100, "%")
-    print("Ties: ", ties / 100 * 100, "%")
+    # print("X wins: ", x_wins/100 * 100, "%")
+    # print("O wins: ", o_wins / 100 * 100, "%")
+    # print("Ties: ", ties / 100 * 100, "%")
+    # print(f"Time elapsed:  {total_time:.2f} minutes\n")
     
 if __name__ == "__main__":
     main()
