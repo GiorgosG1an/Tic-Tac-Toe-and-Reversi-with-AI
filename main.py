@@ -33,9 +33,9 @@ def main():
         print("\t\t\tΕργασία Μαθήματος Τεχνητής Νοημοσύνης")
         print("Τα ερωτήματα εκτελούνται σειριακά εκτός του ερωτήματος 3.1 που")
         print("είναι το παιχνίδι του manual player VS minimax για το Reversi.")
-        print("Πληκτρολογήστε\n1 για τα ερωτήματα της τρίλιζας\n2 για τα ερωτήματα του Reversi\n3 για το ερώτημα 3.1 και έπειτα cntr+c για την διακοπή του.\nΟτιδήποτε άλλο για έξοδο\n")
-        print("Which game would you like to play?\n (1) Tic Tac Toe\n (2) Reversi\n (3) Question 3.1")
-        game_choice = input("Enter the number of the game you would like to play: ")
+        print("Πληκτρολογήστε\n (1) για τα ερωτήματα της τρίλιζας\n (2) για τα ερωτήματα του Reversi\n (3) για το ερώτημα 3.1 και έπειτα cntr+c για την διακοπή του.\n Οτιδήποτε άλλο για έξοδο\n")
+        print("Ποιό παιχνίδι θέλεις να παίξεις?\n (1) Tic Tac Toe\n (2) Reversi\n (3) Ερώτημα 3.1")
+        game_choice = input("Πληκτρολόγησε τον αριθμό του παιχνιδιού >> ")
 
         if (game_choice== '1' or game_choice == '2' or game_choice == '3'):
             x_wins = 0
@@ -43,7 +43,7 @@ def main():
             ties = 0
             if game_choice == '1':
                 game = TicTacToe()
-                print("\t\t\tΕρώτημα 2.1\n")
+                print("Ερώτημα 2.1 MiniMax vs Random player \n")
                 x_wins = 0
                 o_wins = 0
                 ties = 0
